@@ -1,7 +1,9 @@
+import json
 from fastapi import Response, status, APIRouter
-from src.db.memory import carts
+from src.db.db_manager import DBManager
 from src.models.cart import Cart
 
+cart_storage = "src/db/cart.json"
 
 cart_router = APIRouter(prefix="/v1")
 
@@ -12,18 +14,29 @@ def add_items_to_cart(request: Cart):
     Endpoint to add items to cart
     """
 
+    carts = DBManager.load(cart_storage)
+
+    if not carts:
+        carts = {}
+
     # check if cart is empty for the user
     if request.user_id not in carts:
-        carts[request.user_id] = Cart(user_id=request.user_id)
+        carts[request.user_id] = Cart(user_id=request.user_id).model_dump()
 
     # get existing list of cart items
-    existing_items = {item.item_id for item in carts[request.user_id].items}
+    existing_items = {item["item_id"] for item in carts[request.user_id]["items"]}
 
     # only add items which are not already in cart
-    new_items = [item for item in request.items if item.item_id not in existing_items]
+    new_items = [
+        item.model_dump()
+        for item in request.items
+        if item.item_id not in existing_items
+    ]
 
     # if user id already exists in card just extend the new items
-    carts[request.user_id].items.extend(new_items)
+    carts[request.user_id]["items"].extend(new_items)
+
+    DBManager.save(cart_storage, carts)
 
     return Response(status_code=status.HTTP_201_CREATED)
 
@@ -33,8 +46,14 @@ def view_cart(user_id: str):
     """
     Endpoint to view cart for a user
     """
+
+    carts = DBManager.load(cart_storage)
+
+    if not carts:
+        carts = {}
+
     # check if user id exists in cart
     if user_id not in carts:
         return Response(status_code=status.HTTP_404_NOT_FOUND)
 
-    return Response(status_code=status.HTTP_200_OK, content=carts[user_id].json())
+    return Response(status_code=status.HTTP_200_OK, content=json.dumps(carts[user_id]))
