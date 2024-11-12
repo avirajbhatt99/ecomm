@@ -1,9 +1,11 @@
 import json
-from fastapi import Response, status, APIRouter
+from fastapi import status, APIRouter
+from fastapi.responses import JSONResponse
 from src.db.db_manager import DBManager
 from src.models.cart import Cart
+from src.utils.helper import Helper
 
-cart_storage = "src/db/cart.json"
+cart_storage = "src/db/temp/cart.json"
 
 cart_router = APIRouter(prefix="/v1")
 
@@ -38,7 +40,9 @@ def add_items_to_cart(request: Cart):
 
     DBManager.save(cart_storage, carts)
 
-    return Response(status_code=status.HTTP_201_CREATED)
+    return JSONResponse(
+        content={"message": "Items added to cart"}, status_code=status.HTTP_201_CREATED
+    )
 
 
 @cart_router.get("/cart/{user_id}")
@@ -54,6 +58,13 @@ def view_cart(user_id: str):
 
     # check if user id exists in cart
     if user_id not in carts:
-        return Response(status_code=status.HTTP_404_NOT_FOUND)
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND)
 
-    return Response(status_code=status.HTTP_200_OK, content=json.dumps(carts[user_id]))
+    cart_data = carts[user_id]
+
+    # calculate cart total
+    total_amount = Helper.calculate_total_amount(cart_data["items"])
+
+    cart_data["total_amount"] = total_amount
+
+    return JSONResponse(status_code=status.HTTP_200_OK, content=cart_data)

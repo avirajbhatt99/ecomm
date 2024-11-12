@@ -1,4 +1,5 @@
-from fastapi import Response, status, APIRouter
+from fastapi import status, APIRouter
+from fastapi.responses import JSONResponse
 
 
 health_router = APIRouter(prefix="/v1")
@@ -9,4 +10,4 @@ def health_check():
     """
     Endpoint to check health of the server
     """
-    return Response(status_code=status.HTTP_200_OK)
+    return JSONResponse(status_code=status.HTTP_200_OK)

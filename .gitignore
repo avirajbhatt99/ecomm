@@ -163,5 +163,5 @@ cython_debug/
 
 .vscode
 
-# ignore .json
-src/db/*.json
+# ignore temp folder
+src/db/temp

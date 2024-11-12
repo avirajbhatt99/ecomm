@@ -1,4 +1,5 @@
 import json
+import os
 
 
 class DBManager:
@@ -26,11 +27,23 @@ class DBManager:
         except FileNotFoundError:
             return None
 
-    def count(file_path: str):
+    def count(file_path: str, id: str = None):
         """
         count number of entries in the file storage
         """
         data = DBManager.load(file_path)
         if not data:
             return 0
+
+        if id:
+            return len(data.get(id, []))
+
         return len(data)
+
+    def initialize():
+        """
+        Creates a temp folder
+        """
+        folder_path = "src/db/temp"
+        if not os.path.exists(folder_path):
+            os.mkdir(folder_path)
