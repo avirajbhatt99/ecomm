@@ -351,6 +351,6 @@ This endpoint aggregates and returns statistical data based on the orders and di
 - **items_purchased**: Total number of items purchased across all orders.
 - **total_amount**: The total amount spent on all orders.
 - **discount_amount**: The total discount amount applied to all orders.
-- **discount_codes**: List of discount codess.
+- **discount_codes**: List of discount codes.
 
 ---
