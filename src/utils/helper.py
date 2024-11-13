@@ -15,34 +15,21 @@ class Helper:
         """
         get item wise count for all orders
         """
-        return sum(
-            item["quantity"]
-            for user_orders in orders.values()
-            for order in user_orders
-            for item in order["items"]
-        )
+        return sum(item["quantity"] for order in orders for item in order["items"])
 
     @staticmethod
     def get_total_amount(orders):
         """
         get total amount for all orders
         """
-        return sum(
-            order["total_amount"]
-            for user_orders in orders.values()
-            for order in user_orders
-        )
+        return sum(order["total_amount"] for order in orders)
 
     @staticmethod
     def get_discount_amount(orders):
         """
         get total discount amount for all orders
         """
-        return sum(
-            order["discount_applied"]
-            for user_orders in orders.values()
-            for order in user_orders
-        )
+        return sum(order["discount_applied"] for order in orders)
 
     @staticmethod
     def get_discount_codes(discount_codes):

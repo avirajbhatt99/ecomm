@@ -27,16 +27,13 @@ class DBManager:
         except FileNotFoundError:
             return None
 
-    def count(file_path: str, id: str = None):
+    def count(file_path: str):
         """
         count number of entries in the file storage
         """
         data = DBManager.load(file_path)
         if not data:
             return 0
-
-        if id:
-            return len(data.get(id, []))
 
         return len(data)
 

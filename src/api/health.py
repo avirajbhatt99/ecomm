@@ -10,4 +10,6 @@ def health_check():
     """
     Endpoint to check health of the server
     """
-    return JSONResponse(status_code=status.HTTP_200_OK)
+    return JSONResponse(
+        content={"message": "Server is healthy"}, status_code=status.HTTP_200_OK
+    )

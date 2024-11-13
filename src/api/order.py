@@ -22,14 +22,14 @@ def checkout(request: Order):
 
     carts = DBManager.load(cart_storage)
     orders = DBManager.load(order_storage)
-    orders_count = DBManager.count(order_storage, request.user_id)
+    orders_count = DBManager.count(order_storage)
     discount_codes = DBManager.load(discount_storage)
 
     if not discount_codes:
         discount_codes = {}
 
     if not orders:
-        orders = {}
+        orders = []
 
     order_number = orders_count + 1
 
@@ -50,8 +50,8 @@ def checkout(request: Order):
         valid_code = discount_codes.get(str(order_number), {}).get("code")
 
         if not valid_code == request.discount_code:
-            return HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid discount code",
             )
 
@@ -71,9 +71,7 @@ def checkout(request: Order):
     )
 
     # store order in file storage and clear the cart for user
-    user_orders = orders.get(request.user_id, [])
-    user_orders.append(order.model_dump())
-    orders[request.user_id] = user_orders
+    orders.append(order.model_dump())
 
     carts[request.user_id]["items"] = []
 
@@ -92,7 +90,7 @@ def order_detail(user_id: str):
     """
 
     carts = DBManager.load(cart_storage)
-    orders_count = DBManager.count(order_storage, user_id)
+    orders_count = DBManager.count(order_storage)
     discount_codes = DBManager.load(discount_storage)
 
     if not discount_codes:

@@ -58,7 +58,10 @@ def view_cart(user_id: str):
 
     # check if user id exists in cart
     if user_id not in carts:
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND)
+        return JSONResponse(
+            content={"message": "Cart data not found"},
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
 
     cart_data = carts[user_id]
 
