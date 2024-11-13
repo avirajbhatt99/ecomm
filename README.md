@@ -335,10 +335,10 @@ GET /v1/statistics
   "items_purchsed": 100,
   "total_amount": 1500.0,
   "discount_amount": 150.0,
-  "discount_codes": {
-    "DISCOUNT-1": 1,
-    "DISCOUNT-2": 2
-  }
+  "discount_codes": [
+    "DISCOUNT-1"
+    "DISCOUNT-2"
+  ]
 }
 ```
 
